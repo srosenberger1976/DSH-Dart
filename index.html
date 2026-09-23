@@ -194,7 +194,19 @@ width: 45%; }
 </style>
 <!-- ENDE TEIL 1 - CSS LIVE RANGLISTE BREITE -->
 
-
+<!-- Verbindung zum App-Manifest -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#000000">
+<!-- Registrierung des Hintergrund-Service-Workers -->
+<script>
+if ('serviceWorker' in navigator) {
+window.addEventListener('load', () => {
+navigator.serviceWorker.register('./sw.js')
+.then(reg => console.log('App-Modus bereit!'))
+.catch(err => console.error('Fehler:', err));
+});
+}
+</script>
 
  
 </head>
@@ -373,9 +385,16 @@ width: 45%; }
 
 
 
- 
- <button class="btn btn-action" style="width:100%; background-color:#22c55e;" onclick="closeProtectedSettings()">Speichern &amp; Schließen</button>
- </div>
+<div style="display: flex; justify-content: space-between; gap: 4%;">
+    <!-- Bestehender Speicher-Button (angepasst auf halbe Breite) -->
+    <button class="btn btn-action" style="width: 48%; background-color: #22c55e;" onclick="closeProtectedSettings()">Speichern &amp; Schließen</button>
+
+    <!-- NEUER Abbrechen-Button (ohne Speichern - JETZT KORRIGIERT) -->
+    <button class="btn" style="width: 48%; background-color: #6c757d; color: white; border: none; border-radius: 4px; padding: 6px 12px; cursor: pointer;" onclick="location.reload();">Abbrechen</button>
+</div>
+</div>
+
+
  
 
  <!-- AB HIER WIEDER EINFÜGEN: Das ist der Bereich für die echte Startseite -->
@@ -2422,6 +2441,18 @@ window.closeProtectedSettings = closeProtectedSettings;
 
 
 
+function cancelProtectedSettings() {
+    // 1. Das Admin-Menü heraussuchen und wieder ausblenden (verstecken)
+    const menu = document.getElementById('protected-settings-menu');
+    if (menu) menu.classList.add('hidden');
+
+    // 2. Den normalen Spielbereich/Auswahlbereich wieder einblenden
+    const selectionArea = document.getElementById('selection-area');
+    if (selectionArea) selectionArea.classList.remove('hidden');
+
+    // 3. Seite neu laden, um alle ungespeicherten Änderungen in den Eingabefeldern zu verwerfen
+    location.reload();
+}
 
 
 
