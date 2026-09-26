@@ -252,22 +252,59 @@ div:has(> .score-board),
 
 
 
+<!-- PWA Verbindung (Relativer Pfad wichtig fuer Unterordner!) -->
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#e50914">
+<script>
+let deferredPrompt;
+if ('serviceWorker' in navigator) {
+window.addEventListener('load', () => {
+navigator.serviceWorker.register('./sw.js')
+.then(reg => console.log('PWA ServiceWorker aktiv!'))
+.catch(err => console.error('Fehler:', err));
+});
+}
+window.addEventListener('beforeinstallprompt', (e) => {
+e.preventDefault();
+deferredPrompt = e;
+const installArea = document.getElementById('pwa-install-container');
+if (installArea) installArea.style.display = 'block';
+});
+async function triggerPWAInstallation() {
+if (!deferredPrompt) return;
+deferredPrompt.prompt();
+const { outcome } = await deferredPrompt.userChoice;
+deferredPrompt = null;
+const installArea = document.getElementById('pwa-install-container');
+if (installArea) installArea.style.display = 'none';
+}
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
  
 </head>
 <body>
-<div id="pwa-install-msg" class="pwa-banner" onclick="triggerPWAInstall()"> 📱 App auf dem Startbildschirm installieren! </div>
-<div id="whatsapp-sandbox-shield" class="sandbox-overlay hidden"></div>
-<!-- ENDE TEIL 1 - DESIGN & PWA HEAD -->
-<!-- Anfang TEIL 2 - SCREEN LAYOUTS -->
- 
-
-    <!-- ... Ende TEIL 1 ... -->
- 
-
-<!-- Anfang TEIL 2 - SCREEN LAYOUT -->
-
-<!-- AUTOMATISCHE UPDATE-ANFANGSSEITE -->
-<!-- AUTOMATISCHE UPDATE-ANFANGSSEITE -->
+<!-- Installations-Banner direkt unter <body> -->
+<div id="pwa-install-container" style="display: none; padding: 10px 15px;
+background: #fff; color: #212529; border-bottom: 2px solid #e50914;">
+<div style="display: flex; justify-content: space-between; align-items: center;
+gap: 10px;">
+<small style="font-weight: bold;">App auf dem Startbildschirm hinzufügen?</small>
+<button onclick="triggerPWAInstallation()" style="width: auto; padding: 6px 12px;
+margin: 0; background: #4caf50; color: white; border: none; border-radius: 4px;
+font-weight: bold;">Jetzt Installieren</button>
+</div>
+</div>
 <!-- AUTOMATISCHE UPDATE-ANFANGSSEITE -->
 <div id="update-welcome-screen" class="card" style="display: none; padding: 25px; border: 2px solid #2563eb; background: #f8fafc;">
   <div style="text-align: center; margin-bottom: 20px;">
@@ -4976,7 +5013,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 
 </script>
-</script>
+
 
 
 
